@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+        - name: html
+          persistentVolumeClaim:
+            claimName: nginx-pvc
+        - name: html-template
+          configMap:
+            name: nginx-index
+      initContainers:
+        - name: init-copy-index
+          image: busybox
+          command: ["/bin/sh", "-c"]
+          args:
+            - cp /config/index.html /usr/share/nginx/html/index.html;
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+            - name: html-template
+              mountPath: /config
+      containers:
+        - name: nginx
+          image: nginx:1.14.2
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html

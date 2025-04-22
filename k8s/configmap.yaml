@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-index
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Page personnalisée</title>
+    </head>
+    <body>
+        <h1>Bienvenue sur mon Nginx dans Kubernetes !</h1>
+    </body>
+    </html>
